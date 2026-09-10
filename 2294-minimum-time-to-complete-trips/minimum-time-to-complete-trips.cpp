@@ -14,9 +14,9 @@ public:
         return false;
     }
     long long minimumTime(vector<int>& time, int totalTrips) {
-        long long maxele = *max_element(time.begin(), time.end());
+        
         long long low = 1;
-        long long high = maxele*totalTrips;
+        long long high = 1LL*(*min_element(time.begin(),time.end()))*totalTrips;
         long long ans;
 
         while(low<=high)
