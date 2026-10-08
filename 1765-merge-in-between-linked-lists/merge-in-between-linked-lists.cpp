@@ -11,29 +11,20 @@
 class Solution {
 public:
     ListNode* mergeInBetween(ListNode* list1, int a, int b, ListNode* list2) {
-        ListNode* startConnect = list1;
-        ListNode* endConnect = list1;
-        while(b!=0)
-        {
-            endConnect = endConnect->next;
-            b-=1;
+        ListNode* st = list1;
+        ListNode* ed = list1;
+        for (int i=0;i<a-1;i++){
+            st = st->next;
         }
-        endConnect = endConnect->next;
-
-        while(a!=1)
-        {
-            startConnect = startConnect->next;
-            a-=1;
+        for (int i=0;i<b+1;i++){
+            ed = ed->next;
         }
-        startConnect->next = list2;
-        
-        ListNode* temp = list1;
-        while(temp->next!=NULL)
-        {
-            temp = temp->next;
+        ListNode* l2Temp = list2;
+        while(l2Temp->next != NULL){
+            l2Temp = l2Temp->next;
         }
-        temp->next = endConnect;
-
+        st->next = list2;
+        l2Temp->next = ed;
         return list1;
     }
 };
