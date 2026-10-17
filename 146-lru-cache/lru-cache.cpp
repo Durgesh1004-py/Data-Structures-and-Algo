@@ -1,76 +1,89 @@
+struct Node {
+    int key, val;
+    Node* prev;
+    Node* next;
+    Node(int k, int v) : key(k), val(v), prev(this), next(this) {}
+    Node(int k, int v, Node* p, Node* n) : key(k), val(v), prev(p), next(n) {}
+};
+
 class LRUCache {
-    struct Node{
-        Node* prev, *next;
-        int key;
-        int val;
-        Node(int key, int val){
-            this->key = key;
-            this->val = val;
-        }
-    };
-    int cap;
-    unordered_map<int,Node*> m;
-    Node* head = new Node(-1,-1);
-    Node* tail = new Node(-1,-1);
 public:
-
-    LRUCache(int capacity){
-        cap = capacity;
-        head->next = tail;
-        tail->next = head;
+    LRUCache(int capacity) {
+        this->capacity = capacity;
+        size = 0;
+        dummy = new Node(-1, -1);
+        tail = dummy;
     }
-    void addNode(Node* newnode){
-        Node* temp = head -> next;
+    
+    void _to_tail(int key) {
+        Node* curr = store[key];
+        if (curr == tail) return;
+        curr->next->prev = curr->prev;
+        curr->prev->next = curr->next;
 
-        newnode -> next = temp;
-        newnode -> prev = head;
+        curr->next = dummy;
+        curr->prev = tail;
+        tail->next = curr;
+        dummy->prev = curr;
 
-        head -> next = newnode;
-        temp -> prev = newnode;
-    }
-
-    void deleteNode(Node* delnode){
-        Node* prevv = delnode -> prev;
-        Node* nextt = delnode -> next;
-
-        prevv -> next = nextt;
-        nextt -> prev = prevv;
+        tail = curr;
     }
     
     int get(int key) {
-        if(m.find(key) !=m.end())
-        {
-            Node* resNode = m[key];
-            int ans = resNode->val;
-
-            m.erase(key);
-            deleteNode(resNode);
-            addNode(resNode);
-
-            m[key] = head->next;
-            return ans;
+        if (store.find(key) != store.end()) {
+            _to_tail(key);
+            return store[key]->val;
         }
         return -1;
-        
     }
     
     void put(int key, int value) {
-        if(m.find(key) != m.end()){
-            Node* curr = m[key];
-            m.erase(key);
-            deleteNode(curr);
+        if (store.find(key) != store.end()) {
+            _to_tail(key);
+            store[key]->val = value;
+        } else {
+            Node* node = new Node(key, value, tail, dummy);
+            store[key] = node;
+            tail->next = node;
+            dummy->prev = node;
+            tail = node;
+            ++size;
         }
-
-        if(m.size() == cap){
-            m.erase(tail -> prev -> key);
-            deleteNode(tail -> prev);
+        if (size > capacity) {
+            Node* curr = dummy->next;
+            dummy->next = curr->next;
+            curr->next->prev = dummy;
+            store.erase(curr->key);
+            delete curr;
+            --size;
         }
-
-        addNode(new Node(key, value));
-        m[key] = head -> next;
-        
     }
+
+    int capacity;
+    int size;
+    Node* dummy;
+    Node* tail;
+    unordered_map<int, Node*> store;
+    
 };
+
+// operations = [1, 3]
+// store = {
+//     1:1,
+//     2:2,
+//     3:3
+// }
+// count = {
+//     1:1,
+//     // 2:0,
+//     3:1,
+// }
+
+/*
+["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
+[[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]
+*/
+
 
 /**
  * Your LRUCache object will be instantiated and called as such:
