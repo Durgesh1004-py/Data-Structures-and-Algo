@@ -11,24 +11,16 @@
  */
 class Solution {
 public:
-    void storeValues(TreeNode* root,vector<int> &store)
-    {
-        if(root==NULL)
-        {
-            return ;
-        }
-
-        storeValues(root->left,store);
-        store.push_back(root->val);
-        storeValues(root->right,store);
-
+    void inorder(vector<int>& arr,TreeNode* root ){
+        if(root==nullptr) return;
+        inorder(arr, root->left);
+        arr.push_back(root->val);
+        inorder(arr, root->right);
     }
     int kthSmallest(TreeNode* root, int k) {
-        vector<int> store;
-        storeValues(root,store);
-
-        return store[k-1];
-
+        vector<int> arr;
+        inorder(arr,root);
+        return arr[k-1];
         
     }
 };
