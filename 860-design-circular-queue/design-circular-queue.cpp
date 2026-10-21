@@ -1,55 +1,53 @@
+
 class MyCircularQueue {
+private:
+    vector<int> q;
+    int front;
+    int rear;
+    int size;
+    int capacity;
+
 public:
     MyCircularQueue(int k) {
-        data.resize(k);
-        maxsize = k;
+        q.resize(k);
+        front = 0;
+        rear = -1;
+        size = 0;
+        capacity = k;
     }
-    
+
     bool enQueue(int value) {
-        if(isFull()) return false;
-        tail = (tail+1)%maxsize;
-        data[tail] = value;
+        if (isFull()) return false;
+
+        rear = (rear + 1) % capacity;
+        q[rear] = value;
+        size++;
         return true;
     }
-    
+
     bool deQueue() {
-        if(isEmpty()) return false;
-        if(head==tail) head = 0, tail = -1;
-        else head = (head+1) % maxsize;
+        if (isEmpty()) return false;
+
+        front = (front + 1) % capacity;
+        size--;
         return true;
-
     }
-    
+
     int Front() {
-        return isEmpty() ? -1 : data[head];
-        
+        if (isEmpty()) return -1;
+        return q[front];
     }
-    
-    int Rear() {
-        return isEmpty() ? -1 : data[tail];
-        
-    }
-    
-    bool isEmpty() {
-        return tail==-1;
-    }
-    
-    bool isFull() {
-        return !isEmpty() && (tail+1) % maxsize == head;
-        
-    }
-private:
-    int maxsize, head = 0, tail = -1;
-    vector<int> data;
-};
 
-/**
- * Your MyCircularQueue object will be instantiated and called as such:
- * MyCircularQueue* obj = new MyCircularQueue(k);
- * bool param_1 = obj->enQueue(value);
- * bool param_2 = obj->deQueue();
- * int param_3 = obj->Front();
- * int param_4 = obj->Rear();
- * bool param_5 = obj->isEmpty();
- * bool param_6 = obj->isFull();
- */
+    int Rear() {
+        if (isEmpty()) return -1;
+        return q[rear];
+    }
+
+    bool isEmpty() {
+        return size == 0;
+    }
+
+    bool isFull() {
+        return size == capacity;
+    }
+};
