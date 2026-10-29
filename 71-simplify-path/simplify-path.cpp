@@ -1,31 +1,46 @@
 class Solution {
 public:
     string simplifyPath(string path) {
-        vector<string> components;
-        stringstream ss(path);
-        string comp;
-        while (getline(ss, comp, '/')) {
-            if (comp == "" || comp == ".") {
+        
+        stack<string> st;
+        string res;
+        
+        for(int i = 0;  i<path.size(); ++i)
+        {
+            if(path[i] == '/')    
                 continue;
+            string temp;
+			// iterate till we doesn't traverse the whole string and doesn't encounter the last /
+            while(i < path.size() && path[i] != '/')
+            {
+				// add path to temp string
+                temp += path[i];
+                ++i;
             }
-
-            if (comp == "..") {
-                if (!st.empty()) {
-                    st.pop_back();
-                }
-            } else {
-                st.push_back(comp);
+            if(temp == ".")
+                continue;
+			// pop the top element from stack if exists
+            else if(temp == "..")
+            {
+                if(!st.empty())
+                    st.pop();
             }
+            else
+			// push the directory file name to stack
+                st.push(temp);
         }
-
-        stringstream simplifiedPath;
-        for (const string& s : st) {
-            simplifiedPath << "/" << s;
+        
+		// adding all the stack elements to res
+        while(!st.empty())
+        {
+            res = "/" + st.top() + res;
+            st.pop();
         }
-
-        return simplifiedPath.str().empty() ? "/" : simplifiedPath.str();        
+        
+		// if no directory or file is present
+        if(res.size() == 0)
+            return "/";
+        
+        return res;
     }
-
-private:
-    vector<string> st;    
 };
