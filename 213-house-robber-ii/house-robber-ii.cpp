@@ -1,23 +1,32 @@
 class Solution {
 public:
-    int helper(int i,int n, vector<int> &nums, vector<int> &dp)
+    int helper(vector<int> &arr)
     {
-        if(i>=n) return 0;
-        if(dp[i]!=-1) return dp[i];
-        
-        int steal = nums[i]+ helper(i+2,n, nums,dp);
-        int left = helper(i+1,n, nums,dp);
+        int n = arr.size();
+        int prev = arr[0];
+        int prev2 = 0;
+        for(int i=1; i<n; i++)
+        {
+            int take = arr[i];
+            if(i>1) take += prev2;
+            int notTake = 0+prev;
 
-        return dp[i] = max(steal,left);
+            int curi = max(take,notTake);
+            prev2 = prev;
+            prev = curi;
+        }
+        return prev;
     }
     int rob(vector<int>& nums) {
         int n = nums.size();
+        vector<int> temp1,temp2;
         if(n==1) return nums[0];
-        vector<int> dp1(n,-1);
-        int maxi1 = helper(0,n-1,nums,dp1);
-        vector<int> dp2(n,-1);
-        int maxi2 = helper(1,n,nums,dp2);
+        for(int i=0; i<n; i++)
+        {
+            if(i!=0) temp1.push_back(nums[i]);
+            if(i!=n-1) temp2.push_back(nums[i]);
+        }
+        return max(helper(temp1),helper(temp2));
 
-        return max(maxi1,maxi2);
     }
 };
